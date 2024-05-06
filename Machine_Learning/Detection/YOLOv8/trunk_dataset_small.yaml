@@ -1,0 +1,11 @@
+# dataset root dir
+path: /home/guilh/Data_Vineyard_autonomous_robot/DL_trunk_detection
+# train images (relative to 'path')
+train: ForTrunkDet2022_s/images
+# validation images (relative to 'path')
+val: ForTrunkDet2022_s_val/images
+
+#Classes
+names:
+  0: Trunk
+  1: Post

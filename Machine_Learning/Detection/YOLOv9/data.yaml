@@ -1,0 +1,11 @@
+# dataset root dir
+path: /home/guilh/Data_Vineyard_autonomous_robot/DL_trunk_detection
+# train images (relative to 'path')
+train: R4F/train/images
+# validation images (relative to 'path')
+val: R4F/valid/images
+
+#Classes
+names:
+  0: Post
+  1: Trunk

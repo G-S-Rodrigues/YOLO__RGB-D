@@ -1,0 +1,5 @@
+
+model: '/home/guilh/Vineyard_autonomous_robot/Machine_Learning/Segmentation/model/train/weights/best.pt' 
+data: train_data.yaml # (str, optional) path to data file, i.e. coco128.yaml
+save_dir: /home/guilh/Vineyard_autonomous_robot/Machine_Learning/Segmentation/runs/yolov8n/val 
+threshold: 0.6

@@ -1,0 +1,9 @@
+inp_pth : /home/guilh/Data_Vineyard_autonomous_robot/Vinha-09-04/videos
+inp_file_name : row1.mp4
+out_file_name : row1_predict.mp4
+
+threshold : 0.65
+model_path : /home/guilh/Vineyard_autonomous_robot/Machine_Learning/Segmentation/model/train/weights/best.pt
+
+
+CLASSES : [Person,Post,Trunk]

@@ -1,0 +1,12 @@
+# dataset root dir
+path: /home/guilh/Data_Vineyard_autonomous_robot/Machine_Learning/R4F_segmentation
+train: train/images
+val: valid/images
+test: test/images
+
+# Classes
+names:
+  0: Person
+  1: Post
+  2: Trunk
+
