@@ -3,10 +3,21 @@ class Point2D():
         self.x = float
         self.y = float
 
+class Vector3():
+    def __init__(self):
+        self.x = float
+        self.y = float
+        self.z = float
+
 class BoundingBox2D():
     def __init__(self):
-        self.p1 = Point2D()
-        self.p2 = Point2D()
+        self.center = Point2D()
+        self.size = Point2D()
+
+class BoundingBox3D():
+    def __init__(self):
+        self.center = Vector3()
+        self.size = Vector3()
         
 class Mask():
     def __init__(self):
@@ -23,7 +34,8 @@ class Detection():
         # ID for tracking
         self.id = str
         # 2D bounding box surrounding the object in pixels
-        self.bbox = BoundingBox2D()
+        self.bbox2D = BoundingBox2D()
+        self.bbox3D = BoundingBox3D()
         # segmentation mask of the detected object
         # it is only the boundary of the segmented object
         mask = Mask
