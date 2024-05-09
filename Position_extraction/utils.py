@@ -38,5 +38,6 @@ class Detection():
         self.bbox3D = BoundingBox3D()
         # segmentation mask of the detected object
         # it is only the boundary of the segmented object
-        mask = Mask
-        
+        self.mask = Mask()
+        self.mask_box_img = BoundingBox3D()
+        self.mask_box_world = BoundingBox3D()
