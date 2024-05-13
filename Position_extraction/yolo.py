@@ -1,10 +1,15 @@
 import numpy as np
 import cv2
 import open3d as o3d
+import pyglet
 import time
 import pyrealsense2 as rs
 import argparse
 import os.path
+
+import threading
+import queue
+
 from typing import List, Dict, Tuple
 # Vision model
 from ultralytics import YOLO
@@ -27,9 +32,10 @@ class Yolo():
         parser.add_argument("-y", "--yolo_model", type=str, default="/home/guilh/Robotics4Farmers/Machine_Learning/YOLO_models/r4f_yolov8m_seg.pt", help="Path to yolo model")
         parser.add_argument("-pt", "--predict_threshold", type=float, default=0.7, help="Threshold for the predictions confidence ")
         parser.add_argument("-d", "--device", type=str, default="cuda:0", help="Device used for yolo prediction")
-        parser.add_argument("-vi", "--visualize_image", type=bool, default= True, help="Visualize the image (True/False)")
+        parser.add_argument("-vi", "--visualize_image_flag", type=bool, default= True, help="Visualize the image (True/False)")
         parser.add_argument("-vit", "--visualize_image_type", type=str, default= 'mask', help="Visualize the mask or box (mask/box)")
-        parser.add_argument("-vpc", "--visualize_point_cloud", type=bool, default= True, help="Visualize point cloud (True/False)")
+        parser.add_argument("-vpc", "--visualize_point_cloud", type=bool, default= False, help="Visualize point cloud (True/False)")
+        parser.add_argument("-dt", "--display_time", type=bool, default= False, help="Display process time (True/False)")
         
         self.args = parser.parse_args()
         
@@ -50,6 +56,7 @@ class Yolo():
         self.yolo = YOLO(self.args.yolo_model)
         self.yolo.fuse()
 
+                
         # colors for visualization
         
         self._class_to_color = {
@@ -61,6 +68,7 @@ class Yolo():
         self.depth_to_meters_divisor = 1000
         self.maximum_detection_threshold = 0.3
         
+
         # pipeline configuration
         try:
             self.pipeline = rs.pipeline()
@@ -73,21 +81,15 @@ class Yolo():
             self.config.enable_stream(rs.stream.color)
             
             profile = self.pipeline.start(self.config)
-            self.camera_intrinsics = profile.get_stream(rs.stream.depth).as_video_stream_profile().get_intrinsics()
-
+            self.camera_intrinsics = profile.get_stream(rs.stream.color).as_video_stream_profile().get_intrinsics()
+            
             self.camera_intrinsics_o3d = o3d.camera.PinholeCameraIntrinsic()
-            self.camera_intrinsics_o3d.set_intrinsics(1280,    #msg.width
-                                                720,       #msg.height
+            self.camera_intrinsics_o3d.set_intrinsics(self.camera_intrinsics.width,    #msg.width
+                                                self.camera_intrinsics.height,       #msg.height
                                                 self.camera_intrinsics.fx,         #msg.K[0] -> fx
                                                 self.camera_intrinsics.fy,         #msg.K[4] -> fy
                                                 self.camera_intrinsics.ppx,         #msg.K[2] -> cx
                                                 self.camera_intrinsics.ppx)        #msg.K[5] -> cy
-            
-            depth_sensor = profile.get_device().first_depth_sensor()
-            depth_scale = depth_sensor.get_depth_scale()
-            
-            # cv2.namedWindow("Images", cv2.WINDOW_AUTOSIZE)
-            self.colorizer = rs.colorizer()
 
             # Create an align object
             align_to = rs.stream.color
@@ -187,7 +189,8 @@ class Yolo():
     def extract_depth(self, detections,aligned_depth_np):
         start_time_extract = time.time()
         
-        detections = self.extract_boxes(detections, aligned_depth_np)
+        if self.args.visualize_image_type == 'box':
+            detections = self.extract_boxes(detections, aligned_depth_np)
         
         if self.args.visualize_image_type == 'mask':
             detections = self.extract_masks(detections, aligned_depth_np)
@@ -195,55 +198,60 @@ class Yolo():
         self.extract_time = time.time() - start_time_extract
         return detections
     
+    def extract_one_box(self, bb, aligned_depth_np):
+        u_min = max(round(bb.center.x  - bb.size.x / 2), 0)
+        u_max = min(round(bb.center.x  + bb.size.x / 2), aligned_depth_np.shape[1] - 1)
+        v_min = max(round(bb.center.y  - bb.size.y / 2), 0)
+        v_max = min(round(bb.center.y + bb.size.y / 2), aligned_depth_np.shape[0] - 1)
+
+        roi = aligned_depth_np[v_min:v_max, u_min:u_max] / \
+            self.depth_to_meters_divisor  # convert to meters
+            
+        if not np.any(roi):
+            return None
+
+        # find the z coordinate on the 3D BB
+        bb_center_z_coord = aligned_depth_np[int(bb.center.y)][int(bb.center.x)] / \
+            self.depth_to_meters_divisor
+        z_diff = np.abs(roi - bb_center_z_coord)
+        mask_z = z_diff <= self.maximum_detection_threshold 
+        
+        roi_threshold = roi[mask_z]
+        z_min, z_max = np.min(roi_threshold), np.max(roi_threshold)
+        z = (z_max + z_min) / 2
+        
+        # project from image to world space
+        intr = self.camera_intrinsics
+        x = z * (bb.center.x - intr.ppx) / intr.fx
+        y = z * (bb.center.y - intr.ppy) / intr.fy
+        w = z * (bb.size.x / intr.fx)
+        h = z * (bb.size.y / intr.fy)
+
+        # create 3D BB
+        bb_3d = BoundingBox3D()
+        bb_3d.center.x = x
+        bb_3d.center.y = y
+        bb_3d.center.z = z
+        bb_3d.size.x = w
+        bb_3d.size.y = h
+        bb_3d.size.z = float(z_max - z_min)
+        return bb_3d
+    
     def extract_boxes(self, detections, aligned_depth_np):
         
         for detection in detections:
-            bb=detection.bbox2D
-            # crop depth image by the 2d BB
-            u_min = max(round(bb.center.x  - bb.size.x / 2), 0)
-            u_max = min(round(bb.center.x  + bb.size.x / 2), aligned_depth_np.shape[1] - 1)
-            v_min = max(round(bb.center.y  - bb.size.y / 2), 0)
-            v_max = min(round(bb.center.y + bb.size.y / 2), aligned_depth_np.shape[0] - 1)
-
-            roi = aligned_depth_np[v_min:v_max, u_min:u_max] / \
-                self.depth_to_meters_divisor  # convert to meters
-                
-            if not np.any(roi):
-                detection.bbox3D = None
-                continue
-
-            # find the z coordinate on the 3D BB
-            bb_center_z_coord = aligned_depth_np[int(bb.center.y)][int(bb.center.x)] / \
-                self.depth_to_meters_divisor
-            z_diff = np.abs(roi - bb_center_z_coord)
-            mask_z = z_diff <= self.maximum_detection_threshold 
-            
-            roi_threshold = roi[mask_z]
-            z_min, z_max = np.min(roi_threshold), np.max(roi_threshold)
-            z = (z_max + z_min) / 2
-            
-            # project from image to world space
-            intr = self.camera_intrinsics
-            x = z * (bb.center.x - intr.ppx) / intr.fx
-            y = z * ((bb.center.y + bb.size.y / 2) - intr.ppy) / intr.fy
-            w = z * (bb.size.x / intr.fx)
-            h = z * (bb.size.y / intr.fy)
-
-            # create 3D BB
-            bb_3d = BoundingBox3D()
-            bb_3d.center.x = x
-            bb_3d.center.y = y
-            bb_3d.center.z = z
-            bb_3d.size.x = w
-            bb_3d.size.y = h
-            bb_3d.size.z = float(z_max - z_min)
+            bb_3d = self.extract_one_box(detection.bbox2D, aligned_depth_np)
             detection.bbox3D = bb_3d
             
         return detections
         
     def extract_masks(self, detections, depth_np):
         for detection in detections:
-            
+            if detection.class_name == 'Person':
+                bb_3d = self.extract_one_box(detection.bbox2D, depth_np)
+                detection.bbox3D = bb_3d
+                continue
+                
             # obtain the pixels correspondents to the mask (mask_idx)
             mask_array_points = np.array([[int(point.x), int(point.y)]
                                     for point in detection.mask.data])
@@ -371,15 +379,19 @@ class Yolo():
             label = " z:{:.3f} ".format(box3d.center.z)
             pos = (max_pt[0] , min_pt[1] + 60)
             cv2.putText(cv_image,label, pos, font, 0.6, (255,255,255), 1, cv2.LINE_AA)
-            label = "size z:{:.3f}".format(box3d.size.z)
-            pos = (max_pt[0] , min_pt[1] + 80)
-            cv2.putText(cv_image,label, pos, font, 0.6, (255,255,255), 1, cv2.LINE_AA)
-            cv2.circle(cv_image, (round(box_msg.center.x) , round(box_msg.center.y + box_msg.size.y / 2)), 5, (255,255,255))
+            # label = "size z:{:.3f}".format(box3d.size.z)
+            # pos = (max_pt[0] , min_pt[1] + 80)
+            # cv2.putText(cv_image,label, pos, font, 0.6, (255,255,255), 1, cv2.LINE_AA)
+            cv2.circle(cv_image, (round(box_msg.center.x) , round(box_msg.center.y)), 5, (255,255,255))
             
         return cv_image
     
     def draw_mask(self, cv_image: np.array, detection: Detection, color: Tuple[int]) -> np.array:
-
+        
+        if detection.class_name == 'Person':
+            self.draw_box(cv_image, detection, color)
+            return cv_image
+        
         min_pt = (round(detection.bbox2D.center.x - detection.bbox2D.size.x / 2),
                 round(detection.bbox2D.center.y - detection.bbox2D.size.y / 2))
         max_pt = (round(detection.bbox2D.center.x + detection.bbox2D.size.x / 2),
@@ -423,26 +435,27 @@ class Yolo():
         
         start_time_visualization = time.time()
         detection: Detection
+        img = image
         for detection in detections_list:
 
             if self.args.visualize_image_type == 'box':
                 label = detection.class_name
                 color = self._class_to_color[label]
-                image = self.draw_box(image, detection, color)
+                img = self.draw_box(img, detection, color)
                 
             elif self.args.visualize_image_type == 'mask':
                 label = detection.class_name
                 color = self._class_to_color[label]
-                image = self.draw_mask(image, detection, color)
+                img = self.draw_mask(img, detection, color)
 
         if len(image.shape) == 3:
-            color_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+            color_image = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             cv2.imshow(window_name, color_image)
 
         elif len(image.shape) == 2:
-            depth_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+            depth_image = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             depth_color_map = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.04), cv2.COLORMAP_JET)
-            cv2.imshow(window_name,depth_color_map)
+            cv2.imshow(window_name, depth_color_map)
             
         key = cv2.waitKey(1)
         if key == 27:
@@ -450,22 +463,126 @@ class Yolo():
             
         self.visualization_time = time.time() - start_time_visualization
         
-    def visualize_point_cloud(self):
-        # depth_raw = o3d.geometry.Image(aligned_depth_np)#.astype(np.uint16))
-        # object_pointcloud = o3d.geometry.PointCloud.create_from_depth_image(depth_raw, self.camera_intrinsics_o3d)
-        return 0
+    def visualize_point_cloud(self, color_np, aligned_depth_np, vis):
+        start_time_pc = time.time()
 
-def main():
-    
-    yolo_model = Yolo()
-    while yolo_model.enable_yolo: #press ESC in cv2 window to stop
+        color_raw = o3d.geometry.Image(color_np)
+        depth_raw = o3d.geometry.Image(aligned_depth_np)
+        rgbd_image = o3d.geometry.RGBDImage.create_from_color_and_depth(color_raw, depth_raw, depth_trunc=40.0, convert_rgb_to_intensity=False)
+        pcd = o3d.geometry.PointCloud.create_from_rgbd_image(rgbd_image,self.camera_intrinsics_o3d)
+        pcd.voxel_down_sample(voxel_size=0.0008)
+        # Flip it, otherwise the pointcloud will be upside down
+        pcd.transform([[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0], [0, 0, 0, 1]])
+        
+        # # o3d.visualization.draw_geometries([pcd])
+        # o3d.visualization.Visualizer([pcd])
+        # vis.add_geometry(pcd)
+        # pcd.clear()
+        # # Get frameset of color and depth
+
+        # pc = rs.pointcloud()
+        # points = pc.calculate(depth_frame)
+        # print(points)
+        # v = points.get_vertices(2)
+        # print(v)
+        # verts = np.asanyarray(v).view(np.float32).reshape(-1, 3)  # xyz
+        # # print(verts)
+        # pcd = o3d.geometry.PointCloud()
+        # pcd.points = o3d.utility.Vector3dVector(verts)
+
+        # # print("FPS = {0}".format(1/process_time.total_seconds()))
+        
+        vis.clear_geometries()  # Clear existing geometry
+        vis.add_geometry(pcd)   # Add the updated point cloud
+        vis.poll_events()
+        vis.update_renderer()
+
+        self.pc_time = time.time() - start_time_pc
+
+
+        
+def predict_thread(yolo_model, predict_event, predict_queue, image_queue):
+    while yolo_model.enable_yolo:
+        predict_event.wait()
+        predict_event.clear()
         color_np, aligned_depth_np = yolo_model.get_images()
         detections = yolo_model.predict(color_np)
-        detections = yolo_model.extract_depth(detections, aligned_depth_np)
-        if yolo_model.args.visualize_image:
-            yolo_model.visualize_image('Image', detections, color_np) # image_name , detections, detections to display (box or mask):str
-        print("Process predict time: {:.3f} seconds + Extract time {:.3f} seconds + Visualization time: {:.3f} seconds".\
-            format(yolo_model.process_time, yolo_model.extract_time, yolo_model.visualization_time))
+        image_queue.put((color_np, aligned_depth_np))
+        predict_queue.put((detections, aligned_depth_np))
+        if yolo_model.args.display_time:
+            print("Predict time: {:.3f} seconds".\
+                format(yolo_model.process_time))
+
         
+def extract_thread(yolo_model, predict_event, predict_queue, detections_queue):
+    while yolo_model.enable_yolo:
+        detections, aligned_depth_np = predict_queue.get()
+        predict_event.set()
+        detections = yolo_model.extract_depth(detections, aligned_depth_np)
+        detections_queue.put((detections))
+        if yolo_model.args.display_time:
+            print("                                Extract time {:.3f} seconds".\
+                format(yolo_model.extract_time))
+        
+        
+def visualization_thread(yolo_model, image_queue, detections_queue):
+    cv2.namedWindow("Image", cv2.WINDOW_AUTOSIZE)
+    while yolo_model.enable_yolo:
+        color_np, aligned_depth_np = image_queue.get()
+        detections = detections_queue.get()
+        if yolo_model.args.visualize_image_flag:
+            yolo_model.visualize_image('Image', detections, color_np)
+            yolo_model.visualize_image('Depth', detections, aligned_depth_np)# image_name , detections, image
+        if yolo_model.args.display_time:
+            print("                                                                 Visualization time: {:.3f} seconds".\
+                format(yolo_model.visualization_time))
+
+def point_cloud_thread(yolo_model, image_queue):
+    print('pc thread inicialized')
+    vis = o3d.visualization.Visualizer()
+    while yolo_model.enable_yolo:
+        color_np, aligned_depth_np = image_queue.get()
+        if yolo_model.visualize_point_cloud:
+            yolo_model.visualize_point_cloud(color_np, aligned_depth_np, vis)
+        # print("Point Cloud time: {:.3f} seconds".\
+        #     format(yolo_model.visualization_time))
+        
+def main():
+    predict_event = threading.Event()
+    image_queue = queue.Queue(maxsize=10)
+    predict_queue = queue.Queue()
+    detections_queue = queue.Queue()
+    yolo_model = Yolo()
+    predict_event.set()
+    
+    threads = []
+    threads.append(threading.Thread(target=predict_thread, args=(yolo_model, predict_event, predict_queue, image_queue)))
+    threads.append(threading.Thread(target=extract_thread, args=(yolo_model, predict_event, predict_queue, detections_queue)))
+    print('Visualize Image:',yolo_model.args.visualize_image_flag)
+    if yolo_model.args.visualize_image_flag:
+        threads.append(threading.Thread(target=visualization_thread, args=(yolo_model, image_queue, detections_queue)))
+    # if yolo_model.args.visualize_point_cloud:
+    #     threads.append(threading.Thread(target=point_cloud_thread, args=(yolo_model, image_queue)))
+        
+    for thread in threads:
+        thread.start()
+
+    # Wait for all threads to finish
+    for thread in threads:
+        thread.join()
+        
+    # while yolo_model.enable_yolo: #press ESC in cv2 window to stop
+    #     color_np, aligned_depth_np = yolo_model.get_images()
+    #     detections = yolo_model.predict(color_np)
+    #     detections = yolo_model.extract_depth(detections, aligned_depth_np)
+    #     if yolo_model.args.visualize_image:
+    #         yolo_model.visualize_image('Image', detections, color_np) # image_name , detections, image
+    #     # if yolo_model.visualize_point_cloud:
+    #     #     yolo_model.visualize_point_cloud(color_np, aligned_depth_np, vis)
+    #     print("Process predict time: {:.3f} seconds + Extract time {:.3f} seconds + " \
+    #         "Visualization time: {:.3f} seconds".\
+    #         format(yolo_model.process_time, yolo_model.extract_time, yolo_model.visualization_time))
+    
+    
 if __name__ == '__main__':
     main()
