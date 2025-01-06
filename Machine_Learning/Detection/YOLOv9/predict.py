@@ -4,10 +4,10 @@ from ultralytics import YOLO
 import cv2
 
 
-VIDEOS_DIR = '/home/guilh/Data_Vineyard_autonomous_robot/Vinha_camera/videos'
+VIDEOS_DIR = '/home/guilh/data_tese/camera/vinha_swincar/videos'
 
-video_path = os.path.join(VIDEOS_DIR, 'row1.mp4')
-video_path_out = os.path.join(VIDEOS_DIR, 'row1_predict.mp4')
+video_path = os.path.join(VIDEOS_DIR, 'swincarTripVinha.mp4')
+video_path_out = os.path.join(VIDEOS_DIR, 'swincarTripVinha_out.mp4')
 
 cap = cv2.VideoCapture(video_path)
 ret, frame = cap.read()
@@ -15,7 +15,7 @@ H, W, _ = frame.shape
 print(H,W)
 out = cv2.VideoWriter(video_path_out, cv2.VideoWriter_fourcc(*'MP4V'), int(cap.get(cv2.CAP_PROP_FPS)), (W, H))
 
-model_path = '/home/guilh/Vineyard_autonomous_robot/DL_Trunk_Detection/YOLOv9/runs/train2/weights/best.pt'
+model_path = '/home/guilh/Robotics4Farmers/Machine_Learning/Detection/YOLOv9/runs/train2/weights/best.pt'
 
 # Load a model
 model = YOLO(model_path)  # load a custom model

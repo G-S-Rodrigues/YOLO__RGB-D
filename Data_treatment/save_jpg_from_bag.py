@@ -6,19 +6,15 @@ import pyrealsense2 as rs  # Intel RealSense cross-platform open-source API
 import matplotlib.pyplot as plt  # 2D plotting library producing publication quality figures
 from IPython.display import clear_output  # Clear the screen
 
-# extract from bag nice script (example)
-# https://github.com/IntelRealSense/librealsense/issues/4934#issuecomment-537705225
 
-img_start_number = 5040
-frames_ratio = 5 # reduces the number of frames (number of frames =totalframes/frames_ratio)
-bag_path = "/home/guilh/Data_Vineyard_autonomous_robot/Vinha_swincar/swincarTripVinha.bag"
-output_img_path = "/home/guilh/Data_Vineyard_autonomous_robot/Vinha_swincar/images_6fps"
+img_start_number = 1003
+frames_ratio = 30 # reduces the number of frames (number of frames =totalframes/frames_ratio)
+# bag_path = "/home/guilh/data_tese/vinha-11-07/run4_camera_f.bag"
+bag_path = "/media/guilh/Rodriguez/data_tese/vinha-11-07/protected_trunk.bag"
+output_img_path = "/home/guilh/data_tese/Machine_Learning/R4f_final_seg/images3"
 
 
 ############## Creating a Pipeline ############################
-# The pipeline is a high-level API for streaming and processing frames, abstracting camera configurations
-# and simplifying user interaction with the device and computer vision processing modules.
-# Config is a utility object used by a pipeline.
 
 pipe = rs.pipeline()  # Create a pipeline
 cfg = rs.config()  # Create a default configuration
@@ -27,7 +23,7 @@ print("\nPipeline is created\n")
 
 ############## Find RealSense Devices ############################
 print("Creating devices from records..\n")
-#cfg.enable_device_from_file(str(os.environ['HOME'])+'//downloads//bear.bag', repeat_playback = True)
+
 cfg.enable_device_from_file(bag_path, repeat_playback = False)
 
 device = cfg.resolve(pipe).get_device()

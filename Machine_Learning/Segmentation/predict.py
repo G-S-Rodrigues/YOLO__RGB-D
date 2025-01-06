@@ -61,7 +61,11 @@ def plot_one_box(x, img, color=None, label=None, line_thickness=10):
 
 
 def main(args=None):
+    print('This script uses an mp4 video to predict. The files directories are places in predict_dir.yaml. \n It runs the prediction and saves an mp4 video to the same folder.')
     file_path, file_path_out, model_path , threshold = get_inp('predict_dir.yaml')
+    print('File path: ', file_path)
+    print('File path output: ', file_path_out)
+    print('model_path: ', model_path)
     
     # Load the model
     model = YOLO(model_path)

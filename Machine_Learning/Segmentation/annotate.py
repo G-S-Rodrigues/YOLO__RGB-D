@@ -3,9 +3,9 @@ from ultralytics.data.annotator import auto_annotate
 
 
 auto_annotate(
-    data='/home/guilh/Data_Vineyard_autonomous_robot/Machine_Learning/All_images_6fps',
-    det_model='/home/guilh/Vineyard_autonomous_robot/Machine_Learning/Segmentation/model/train/weights/best.pt',
-    sam_model='sam_l.pt',
+    data='/home/guilh//data_tese/Machine_Learning/R4f_final_seg/resized',
+    det_model='/home/guilh/Robotics4Farmers/Machine_Learning/YOLO_models/r4f_yolov8m_seg.pt',
+    sam_model='sam2_l.pt',
     device="cuda",
-    output_dir='/home/guilh/Data_Vineyard_autonomous_robot/Machine_Learning/All_labels_6fps'
+    output_dir='/home/guilh//data_tese/Machine_Learning/R4f_final_seg/lables'
 )

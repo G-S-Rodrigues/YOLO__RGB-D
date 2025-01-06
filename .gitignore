@@ -3,9 +3,11 @@
 /Machine_Learning/Segmentation/model
 /Machine_Learning/Detection/YOLOv8/runs_n
 /Machine_Learning/Detection/YOLOv9/runs
+/Position_extraction/
 
 /Data_treatment/Augmentation
 /Data_treatment/Augmentation_git
 
 *.pt
 *.engine
+*.onnx
