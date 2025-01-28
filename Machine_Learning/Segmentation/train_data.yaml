@@ -1,5 +1,5 @@
 # dataset root dir
-path: /home/guilh/Data_Vineyard_autonomous_robot/Machine_Learning/R4F_segmentation
+path: /media/r4f-orin/SD/Data/Machine_Learning/R4F_seg
 train: train/images
 val: valid/images
 test: test/images

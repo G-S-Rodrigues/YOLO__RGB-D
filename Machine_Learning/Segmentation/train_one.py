@@ -18,7 +18,6 @@ def main():
         
     model = SegmentationTrainer(overrides=params)
     results = model.train()
-    model.export(format='engine')
     return 0
 
 if __name__ == '__main__':

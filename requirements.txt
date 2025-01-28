@@ -1,3 +1,2 @@
 pyrealsense2
 ultralytics
-open3d

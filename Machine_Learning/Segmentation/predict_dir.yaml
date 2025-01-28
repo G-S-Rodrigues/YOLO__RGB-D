@@ -1,9 +1,8 @@
-inp_pth : /home/guilh/data_tese/camera/vinha-09-04/videos
+inp_pth : /home/r4f-orin/camera/vinha-09-04/videos
 inp_file_name : row2.mp4
 out_file_name : row2_predict.mp4
 
 threshold : 0.65
-#model_path : /home/guilh/Robotics4Farmers/Machine_Learning/Segmentation/model/train/weights/best.pt
-model_path : /home/guilh/Robotics4Farmers/Machine_Learning/YOLO_models/yolo11m-seg.pt
+model_path : /media/r4f-orin/SD/dev/Neural_Network_Yolo/YOLO_models/r4f_yolov8m_seg.pt
 
 #CLASSES : [Person,Post,Trunk]

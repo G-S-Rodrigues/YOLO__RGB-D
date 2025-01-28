@@ -5,6 +5,8 @@
 /Machine_Learning/Detection/YOLOv9/runs
 /Position_extraction/
 
+/runs
+/YOLO_models
 /Data_treatment/Augmentation
 /Data_treatment/Augmentation_git
 
