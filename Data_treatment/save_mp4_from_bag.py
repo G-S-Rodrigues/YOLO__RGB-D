@@ -4,9 +4,9 @@ import numpy as np
 import pyrealsense2 as rs  # Intel RealSense SDK
 
 # ========== Configuration ==========
-name = "row1"
-bag_path = f"/media/r4f-orin/SD/Data/vinha-09-04/{name}.bag"
-output_video_path = f"/media/r4f-orin/SD/Data/vinha-09-04/videos/{name}.mp4"
+name = "run4_camera_f"
+bag_path = f"/media/r4f-orin/SD/Data/vinha-11-07/{name}.bag"
+output_video_path = f"/media/r4f-orin/SD/Data/vinha-11-07/videos/{name}.mp4"
 
 # ========== Initialize RealSense Pipeline ==========
 pipe = rs.pipeline()

@@ -1,8 +1,0 @@
-inp_pth : /media/r4f-orin/SD/Data/vinha-11-07/videos/
-inp_file_name : run3_camera_f.mp4
-out_file_name : run3_camera_f_predict.mp4
-
-threshold : 0.60
-model_path : /media/r4f-orin/SD/dev/Neural_Network_Yolo/YOLO_models/r4f_yolo11n_seg.pt
-
-#CLASSES : [Person,Post,Trunk]
