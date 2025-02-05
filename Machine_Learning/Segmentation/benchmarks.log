@@ -1,0 +1,126 @@
+
+Benchmarks complete for r4f_yolo11n_seg.pt on train_data.yaml at imgsz=160 (175.18s)
+                   Format Status❔  Size (MB)  metrics/mAP50-95(M)  Inference time (ms/im)     FPS
+0                 PyTorch       ✅        5.8               0.1622                   31.11   32.14
+1             TorchScript       ✅       11.3               0.1603                   16.55   60.41
+2                    ONNX       ✅       10.9               0.1602                   13.05   76.62
+3                OpenVINO       ❌        0.0                  NaN                     NaN     NaN
+4                TensorRT       ❌        0.0                  NaN                     NaN     NaN
+5                  CoreML       ❌        0.0                  NaN                     NaN     NaN
+6   TensorFlow SavedModel       ❌        0.0                  NaN                     NaN     NaN
+7     TensorFlow GraphDef       ❌        0.0                  NaN                     NaN     NaN
+8         TensorFlow Lite       ❌        0.0                  NaN                     NaN     NaN
+9     TensorFlow Edge TPU       ❌        0.0                  NaN                     NaN     NaN
+10          TensorFlow.js       ❌        0.0                  NaN                     NaN     NaN
+11           PaddlePaddle       ❌        0.0                  NaN                     NaN     NaN
+12                    MNN       ✅       10.9               0.1600                    7.79  128.36
+13                   NCNN       ✅       10.9               0.1633                   53.11   18.83
+14                    IMX       ❌        0.0                  NaN                     NaN     NaN
+
+Benchmarks complete for r4f_yolo11n_seg.pt on train_data.yaml at imgsz=160 (158.23s)
+                   Format Status❔  Size (MB)  metrics/mAP50-95(M)  Inference time (ms/im)     FPS
+0                 PyTorch       ✅        5.8               0.1623                   89.22   11.21
+1             TorchScript       ✅       11.3               0.1602                   68.87   14.52
+2                    ONNX       ✅       10.9               0.1602                   14.43   69.32
+3                OpenVINO       ✅       11.1               0.1607                   12.83   77.94
+4                TensorRT       ❌        0.0                  NaN                     NaN     NaN
+5                  CoreML       ❌        0.0                  NaN                     NaN     NaN
+6   TensorFlow SavedModel       ❌        0.0                  NaN                     NaN     NaN
+7     TensorFlow GraphDef       ❌        0.0                  NaN                     NaN     NaN
+8         TensorFlow Lite       ❌        0.0                  NaN                     NaN     NaN
+9     TensorFlow Edge TPU       ❌        0.0                  NaN                     NaN     NaN
+10          TensorFlow.js       ❌        0.0                  NaN                     NaN     NaN
+11           PaddlePaddle       ❎        0.0                  NaN                     NaN     NaN
+12                    MNN       ✅       10.9               0.1600                    8.35  119.72
+13                   NCNN       ✅       10.9               0.1633                   33.31   30.02
+14                    IMX       ❌        0.0                  NaN                     NaN     NaN
+
+Benchmarks complete for r4f_yolo11n_seg.pt on train_data.yaml at imgsz=640 (423.15s)
+                   Format Status❔  Size (MB)  metrics/mAP50-95(M)  Inference time (ms/im)    FPS
+0                 PyTorch       ✅        5.8               0.5035                  486.45   2.06
+1             TorchScript       ✅       11.4               0.4989                  589.40   1.70
+2                    ONNX       ✅       11.1               0.4989                  119.37   8.38
+3                OpenVINO       ✅       11.2               0.5018                   74.51  13.42
+4                TensorRT       ❌        0.0                  NaN                     NaN    NaN
+5                  CoreML       ❌        0.0                  NaN                     NaN    NaN
+6   TensorFlow SavedModel       ❌        0.0                  NaN                     NaN    NaN
+7     TensorFlow GraphDef       ❌        0.0                  NaN                     NaN    NaN
+8         TensorFlow Lite       ❌        0.0                  NaN                     NaN    NaN
+9     TensorFlow Edge TPU       ❌        0.0                  NaN                     NaN    NaN
+10          TensorFlow.js       ❌        0.0                  NaN                     NaN    NaN
+11           PaddlePaddle       ❎        0.0                  NaN                     NaN    NaN
+12                    MNN       ✅       11.0               0.4993                   64.77  15.44
+13                   NCNN       ✅       11.0               0.5010                  130.80   7.65
+14                    IMX       ❌        0.0                  NaN                     NaN    NaN
+
+Benchmarks complete for r4f_yolo11n_seg.pt on train_data.yaml at imgsz=640 (205.55s)
+                   Format Status❔  Size (MB)  metrics/mAP50-95(M)  Inference time (ms/im)    FPS
+0                 PyTorch       ✅        5.8               0.5034                   31.45  31.80
+1             TorchScript       ✅       11.4               0.4988                   18.23  54.85
+2                    ONNX       ✅       11.1               0.4989                  116.59   8.58
+3                OpenVINO       ❌        0.0                  NaN                     NaN    NaN
+4                TensorRT       ❌        0.0                  NaN                     NaN    NaN
+5                  CoreML       ❌        0.0                  NaN                     NaN    NaN
+6   TensorFlow SavedModel       ❌        0.0                  NaN                     NaN    NaN
+7     TensorFlow GraphDef       ❌        0.0                  NaN                     NaN    NaN
+8         TensorFlow Lite       ❌        0.0                  NaN                     NaN    NaN
+9     TensorFlow Edge TPU       ❌        0.0                  NaN                     NaN    NaN
+10          TensorFlow.js       ❌        0.0                  NaN                     NaN    NaN
+11           PaddlePaddle       ❎        0.0                  NaN                     NaN    NaN
+12                    MNN       ✅       11.0               0.4993                   65.61  15.24
+13                   NCNN       ✅       11.0               0.5010                   98.40  10.16
+14                    IMX       ❌        0.0                  NaN                     NaN    NaN
+
+Benchmarks complete for r4f_yolo11n_seg.pt on train_data.yaml at imgsz=640 (371.40s)
+                   Format Status❔  Size (MB)  metrics/mAP50-95(M)  Inference time (ms/im)     FPS
+0                 PyTorch       ✅        5.8               0.5034                   33.35   29.99
+1             TorchScript       ✅       11.4               0.4988                   18.50   54.05
+2                    ONNX       ✅       11.1               0.4989                  130.46    7.67
+3                OpenVINO       ❌        0.0                  NaN                     NaN     NaN
+4                TensorRT       ✅       12.6               0.4989                    7.17  139.36
+5                  CoreML       ❌        0.0                  NaN                     NaN     NaN
+6   TensorFlow SavedModel       ❌        0.0                  NaN                     NaN     NaN
+7     TensorFlow GraphDef       ❌        0.0                  NaN                     NaN     NaN
+8         TensorFlow Lite       ❌        0.0                  NaN                     NaN     NaN
+9     TensorFlow Edge TPU       ❌        0.0                  NaN                     NaN     NaN
+10          TensorFlow.js       ❌        0.0                  NaN                     NaN     NaN
+11           PaddlePaddle       ❎        0.0                  NaN                     NaN     NaN
+12                    MNN       ✅       11.0               0.4993                   65.31   15.31
+13                   NCNN       ✅       11.0               0.5010                   70.44   14.20
+14                    IMX       ❌        0.0                  NaN                     NaN     NaN
+
+Benchmarks complete for r4f_yolo11n_seg.pt on train_data.yaml at imgsz=640 (411.07s)
+                   Format Status❔  Size (MB)  metrics/mAP50-95(M)  Inference time (ms/im)     FPS
+0                 PyTorch       ✅        5.8               0.5034                   31.87   31.38
+1             TorchScript       ✅       11.4               0.4988                   18.69   53.51
+2                    ONNX       ✅       11.1               0.4989                  115.35    8.67
+3                OpenVINO       ❌        0.0                  NaN                     NaN     NaN
+4                TensorRT       ✅       12.9               0.4989                    6.82  146.60
+5                  CoreML       ❌        0.0                  NaN                     NaN     NaN
+6   TensorFlow SavedModel       ❌        0.0                  NaN                     NaN     NaN
+7     TensorFlow GraphDef       ❌        0.0                  NaN                     NaN     NaN
+8         TensorFlow Lite       ❌        0.0                  NaN                     NaN     NaN
+9     TensorFlow Edge TPU       ❌        0.0                  NaN                     NaN     NaN
+10          TensorFlow.js       ❌        0.0                  NaN                     NaN     NaN
+11           PaddlePaddle       ❎        0.0                  NaN                     NaN     NaN
+12                    MNN       ✅       11.0               0.4993                   65.50   15.27
+13                   NCNN       ✅       11.0               0.5010                  107.85    9.27
+14                    IMX       ❌        0.0                  NaN                     NaN     NaN
+
+Benchmarks complete for r4f_yolo11n_seg.pt on train_data.yaml at imgsz=640 (406.87s)
+                   Format Status❔  Size (MB)  metrics/mAP50-95(M)  Inference time (ms/im)     FPS
+0                 PyTorch       ✅        5.8               0.5034                   31.30   31.95
+1             TorchScript       ✅       11.4               0.4988                   18.08   55.29
+2                    ONNX       ✅       11.1               0.4989                  115.49    8.66
+3                OpenVINO       ❌        0.0                  NaN                     NaN     NaN
+4                TensorRT       ✅       12.8               0.4989                    7.05  141.78
+5                  CoreML       ❌        0.0                  NaN                     NaN     NaN
+6   TensorFlow SavedModel       ❌        0.0                  NaN                     NaN     NaN
+7     TensorFlow GraphDef       ❌        0.0                  NaN                     NaN     NaN
+8         TensorFlow Lite       ❌        0.0                  NaN                     NaN     NaN
+9     TensorFlow Edge TPU       ❌        0.0                  NaN                     NaN     NaN
+10          TensorFlow.js       ❌        0.0                  NaN                     NaN     NaN
+11           PaddlePaddle       ❎        0.0                  NaN                     NaN     NaN
+12                    MNN       ✅       11.0               0.4993                   66.72   14.99
+13                   NCNN       ✅       11.0               0.5010                  101.96    9.81
+14                    IMX       ❌        0.0                  NaN                     NaN     NaN

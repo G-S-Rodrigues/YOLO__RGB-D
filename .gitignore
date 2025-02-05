@@ -7,6 +7,7 @@
 
 /runs
 /YOLO_models
+/Models validation
 /Data_treatment/Augmentation
 /Data_treatment/Augmentation_git
 

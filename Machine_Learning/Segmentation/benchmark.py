@@ -9,12 +9,13 @@ def main():
     with open("benchmark_cfg.yaml", 'r') as stream:
         params = yaml.safe_load(stream)
     
-    #model = YOLO()  # load a custom trained model
-
-    #    Export the model
-    #model.export(format='engine')
     # Benchmark on GPU
-    benchmark(model=params['model'], data=params['data'], imgsz=640, half=False, device=0)
+    benchmark(model=params['model'], 
+              data=params['data'],
+              imgsz=640,
+            #   half=params['half'], 
+              device=params['device']
+            )
     
     return 0
 

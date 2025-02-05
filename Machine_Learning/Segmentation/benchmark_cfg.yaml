@@ -1,5 +1,7 @@
 
-model: '/home/guilh/Vineyard_autonomous_robot/Machine_Learning/Segmentation/model/train/weights/best.engine' 
+model: '/media/r4f-orin/SD/dev/Neural_Network_Yolo/YOLO_models/r4f_yolo11n_seg.pt' 
 data: train_data.yaml # (str, optional) path to data file, i.e. coco128.yaml
-save_dir: /home/guilh/Vineyard_autonomous_robot/Machine_Learning/Segmentation/runs/yolov8n
-threshold: 0.6
+
+half: false  # Enables half-precision (FP16) computation, reducing memory usage and potentially increasing speed with minimal impact on accuracy.
+device: 0
+
