@@ -3,8 +3,10 @@ import cv2
 import numpy as np
 import pyrealsense2 as rs  # Intel RealSense SDK
 
+#ffmpeg -ss 00:01:23 -i input.mp4 -frames:v 1 output.jpg
+
 # ========== Configuration ==========
-name = "run4_camera_f"
+name = "run3_camera_r"
 bag_path = f"/media/r4f-orin/SD/Data/vinha-11-07/{name}.bag"
 output_video_path = f"/media/r4f-orin/SD/Data/vinha-11-07/videos/{name}.mp4"
 

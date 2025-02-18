@@ -1,12 +1,12 @@
 
-model: '/media/r4f-orin/SD/dev/Neural_Network_Yolo/YOLO_models/r4f_yolo11l_seg.pt' 
+model: '/media/r4f-orin/SD/dev/Neural_Network_Yolo/YOLO_models/r4f_yolo11l_seg.engine' 
 project: /media/r4f-orin/SD/dev/Neural_Network_Yolo/Models validation
 name: yolo11
 data: train_data.yaml # (str, optional) path to data file, i.e. coco128.yaml
 split: test  #Determines the dataset split to use for validation (val, test, or train). Allows flexibility in choosing the data segment for performance evaluation.
 
-half: False  # Enables half-precision (FP16) computation, reducing memory usage and potentially increasing speed with minimal impact on accuracy.
-device: 0
+half: False
+device:
 batch: 1
 save_json: False
 plots: False

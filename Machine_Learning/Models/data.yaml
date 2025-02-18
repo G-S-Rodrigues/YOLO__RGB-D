@@ -1,0 +1,12 @@
+# dataset root dir
+path: /media/r4f-orin/SD/Data/Machine_Learning/R4F_seg
+train: train/images
+val: train/images
+test: train/images
+
+# Classes
+names:
+  0: Person
+  1: Post
+  2: Trunk
+

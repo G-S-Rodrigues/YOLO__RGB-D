@@ -6,7 +6,7 @@ import yaml
 from PIL import Image
 
 def main(args=None):
-    name = "run1_camera_f"
+    name = "run3_camera_r"
     file_path = f"/media/r4f-orin/SD/Data/vinha-11-07/videos/{name}.mp4"
     base_path = f"/media/r4f-orin/SD/Results/vinha-11-07"   
     base_model = f"/media/r4f-orin/SD/dev/Neural_Network_Yolo/YOLO_models"
