@@ -6,9 +6,9 @@ import pyrealsense2 as rs  # Intel RealSense SDK
 #ffmpeg -ss 00:01:23 -i input.mp4 -frames:v 1 output.jpg
 
 # ========== Configuration ==========
-name = "run3_camera_r"
-bag_path = f"/media/r4f-orin/SD/Data/vinha-11-07/{name}.bag"
-output_video_path = f"/media/r4f-orin/SD/Data/vinha-11-07/videos/{name}.mp4"
+name = "m_density2"
+bag_path = f"/media/r4f-orin/SD/Data/lab/{name}.bag"
+output_video_path = f"/media/r4f-orin/SD/Data/lab/videos/{name}.mp4"
 
 # ========== Initialize RealSense Pipeline ==========
 pipe = rs.pipeline()

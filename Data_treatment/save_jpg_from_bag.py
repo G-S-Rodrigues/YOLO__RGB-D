@@ -7,12 +7,11 @@ import matplotlib.pyplot as plt  # 2D plotting library producing publication qua
 from IPython.display import clear_output  # Clear the screen
 
 
-img_start_number = 1003
+img_start_number = 0
 frames_ratio = 30 # reduces the number of frames (number of frames =totalframes/frames_ratio)
-# bag_path = "/home/guilh/data_tese/vinha-11-07/run4_camera_f.bag"
-bag_path = "/media/guilh/Rodriguez/data_tese/vinha-11-07/protected_trunk.bag"
-output_img_path = "/home/guilh/data_tese/Machine_Learning/R4f_final_seg/images3"
-
+name = "m_density2"
+bag_path = f"/media/r4f-orin/SD/Data/lab/{name}.bag"
+output_img_path = f"/media/r4f-orin/SD/Data/lab/images"
 
 ############## Creating a Pipeline ############################
 

@@ -14,7 +14,7 @@ def main():
                                 project=params['project'],
                                 name= params['name'],
                                 split= params['split'],
-                                half= params['half'],
+                                # half= params['half'],
                                 device= params['device'],
                                 batch= params['batch'],
                                 save_json= params['save_json'],

@@ -6,11 +6,11 @@ import yaml
 from PIL import Image
 
 def main(args=None):
-    name = "run3_camera_r"
-    file_path = f"/media/r4f-orin/SD/Data/vinha-11-07/videos/{name}.mp4"
-    base_path = f"/media/r4f-orin/SD/Results/vinha-11-07"   
-    base_model = f"/media/r4f-orin/SD/dev/Neural_Network_Yolo/YOLO_models"
-    model_name = f"r4f_yolo11x_seg.pt"
+    name = "m_density2"
+    file_path = f"/media/r4f-orin/SD/Data/lab/videos/{name}.mp4"
+    base_path = f"/media/r4f-orin/SD/Data/lab/videos/"   
+    base_model = f"/media/r4f-orin/SD/dev/Neural_Network_Yolo/YOLO_models/Cones"
+    model_name = f"cones_r4f.pt"
     threshold = 0.4
     
 
@@ -31,10 +31,16 @@ def main(args=None):
         file_name = f"predict_{name}_{model_name_clean}_{counter}.mp4"
         file_path_out = os.path.join(base_path, file_name)
         counter += 1
-        
-    model = YOLO(model_path, task="segment")
 
     # Load the model
+    model = YOLO(model_path, task="segment")
+    # print(model)
+
+    # detection_model = YOLO(model_path)
+    # model = YOLO("yolo11n-seg.pt")  # Load a segmentation model
+    # model.model.load_state_dict(detection_model.model.state_dict(), strict=False)
+    # model.save("segmentation_model.pt")
+
     class_names = model.names
     print('Class Names: ', class_names)
 
@@ -54,11 +60,11 @@ def main(args=None):
                      line_width= 2,
                      font_size= 10
                     ) 
-        out.write(img)
+        # out.write(img)
 
-        # cv2.imshow('img', img)
-        # if cv2.waitKey(1) & 0xFF == ord('q'):
-        #     break
+        cv2.imshow('img', img)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
     
     # cap.release()
     out.release()
